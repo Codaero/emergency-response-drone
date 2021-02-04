@@ -62,7 +62,7 @@ def show_messages(m):
             print ("No data recieved")
         
  
-        time.sleep(0.01)
+        time.sleep(1)
 try: 
     master = mavutil.mavlink_connection("COM4")
     wait_heartbeat(master)
