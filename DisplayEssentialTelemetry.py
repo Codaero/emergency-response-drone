@@ -36,8 +36,8 @@ class SimpleGUI:
 
         #----#
         #Arming buttons
-        self.arm = Label(self.root, text='Arm', function= lambda: commands.arm(self.master))
-        self.disarm = Label(self.root, text='Arm', function= lambda: commands.disarm(self.master))
+        self.arm = Button(self.root, text='Arm', command= lambda: commands.arm(self.master))
+        self.disarm = Button(self.root, text='Disarm', command= lambda: commands.disarm(self.master))
 
         self.arm.pack()
         self.disarm.pack()
@@ -65,6 +65,9 @@ class SimpleGUI:
     def run(self): ##main part of the application
         
         commands.wait_heartbeat(self.master)
+
+        #self.master = commands.connect("COM4")
+        #commands.wait_heartbeat(self.master)
 
         self.root.configure(bg="#2a2b2e") #sets the background to white rather than default gray.
         self.root.protocol("WM_DELETE_WINDOW", self.quitting) ##changes the X (close) Button to run a function instead.
