@@ -18,7 +18,7 @@ def request_message(m, id):
 def display_data(m):    
     while True:
         wait_heartbeat(m)
-        request_message(m, 33)
+        request_message(m, 24)
         request_message(m, 74)
         request_message(m, 141)
         request_message(m, 1) 
@@ -39,12 +39,12 @@ def display_data(m):
         except: 
             heading = "no data given"
         try: 
-            gpslat = m.messages['GLOBAL_POSITION_INT'].lat
+            gpslat = m.messages['GPS_RAW_INT'].lat
             gpslat /=10000000.0
         except: 
             gpslat = "no data given"
         try:
-            gpslong = m.messages['GLOBAL_POSITION_INT'].lon
+            gpslong = m.messages['GPS_RAW_INT'].lon
             gpslong /=10000000.0
         except: 
             gpslong = "no data given"

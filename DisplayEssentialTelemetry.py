@@ -66,6 +66,8 @@ class SimpleGUI:
 
         #############################################################
         while not self.quit: ##flag to quit the application
+            self.root.update_idletasks() #updates the root. same as root.mainloop() but safer and interruptable
+            self.root.update() #same as above. This lest you stop the loop or add things to the loop.
             self.refreshLabels(commands.display_data(master))
             time.sleep(0.6)
 
