@@ -1,5 +1,4 @@
-import commands
-import time
+import commands, time
 from tkinter import *
 from tkinter.ttk import *
 import pymavlink
@@ -10,7 +9,16 @@ class SimpleGUI:
         #Instance variables
         self.root = Tk()
         self.quit = False
-        self.master = m
+        self.comsEstablished = True
+        
+        #attempt to establish connection
+        self.errComs = Label(self.root, text='Communication not established. Trying again.', style="BW.TLabel")
+        try:
+            self.master = commands.connect("COM4")
+            self.errComs.pack_forget()
+        except:
+            self.errComs.pack()
+            self.comsEstablished = False
 
         #----#
         #Styling
@@ -63,8 +71,8 @@ class SimpleGUI:
         self.fltMod.pack()
     
     def run(self): ##main part of the application
-        
-        commands.wait_heartbeat(self.master)
+        if self.comsEstablished:
+            commands.wait_heartbeat(self.master)
 
         #self.master = commands.connect("COM4")
         #commands.wait_heartbeat(self.master)
@@ -78,13 +86,22 @@ class SimpleGUI:
         while not self.quit: ##flag to quit the application
             self.root.update_idletasks() #updates the root. same as root.mainloop() but safer and interruptable
             self.root.update() #same as above. This lest you stop the loop or add things to the loop.
-            self.refreshLabels(commands.display_data(self.master))
+
+            #checks for established communications
+            if self.comsEstablished:
+                self.refreshLabels(commands.display_data(self.master)) # will refresh labels if communications exist
+            else:
+                try: #if there is no connection, it attempts to make one
+                    self.master = commands.connect("COM4")
+                    self.errComs.pack_forget()
+                    self.comsEstablished = True #if there is a connection is established, everything goes back to normal
+                except: #if an error occurs making the connection, it tries again every .1 second
+                    self.errComs.pack()
+                    self.comsEstablished = False
             time.sleep(0.1)
 
 if __name__ == "__main__":
-    master = commands.connect("COM4")
-    commands.wait_heartbeat(master)
-    app = SimpleGUI(master) ##creates instance of GUI class
+    app = SimpleGUI("COM4") ##creates instance of GUI class
     try:
         app.run()# starts the application
     except KeyboardInterrupt:
