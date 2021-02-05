@@ -2,9 +2,9 @@ import commands
 try: 
     master = commands.connect("COM4")
     commands.wait_heartbeat(master)
-    print ("Arming") 
     print (master.messages['HEARTBEAT'].base_mode)
     print (master.messages['HEARTBEAT'].system_status)
+    print ("Arming") 
     try: 
         commands.arm(master)
     except: 
