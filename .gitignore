@@ -1,6 +1,1 @@
-**/Scripts
-**/Lib
-**/Include
-pyvenv.cfg
-*.pyc
-*.json
+**/venv
