@@ -50,7 +50,7 @@ def display_data(m):
             gpslong = "no data given"
         try:
             volt = m.messages['SYS_STATUS'].voltage_battery
-            volt /= 10000.0
+            volt /= 1000.0
         except: 
             volt = "no data given"
         try: 
