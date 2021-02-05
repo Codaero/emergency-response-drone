@@ -3,3 +3,4 @@
 **/Include
 pyvenv.cfg
 *.pyc
+*.json
