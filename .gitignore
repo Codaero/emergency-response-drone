@@ -1,5 +1,5 @@
-**/Include
-**/Lib
 **/Scripts
+**/Lib
+**/Include
 pyvenv.cfg
 *.pyc
