@@ -1,18 +1,23 @@
 import time
 from pymavlink import mavutil
 
-
+# This method opens a connection and returns an object corresponding to that connection. baud rate defaults to 57600. 
+# @param port the port to connect to (using "COM4")
+# @return an object that corresponds to the connection between the computer and the pixhawk. 
 def connect(port):
     return mavutil.mavlink_connection(port, baud=57600)
 
-
+# waits for a heartbeat message from the connection before continuing. 
+# @param m the connection
 def wait_heartbeat(m):
     print("Waiting for APM heartbeat")
     m.wait_heartbeat()
     print("Heartbeat from APM (system %u component %u)" %
           (m.target_system, m.target_system))
 
-
+# Requests a message from the pixhawk according to its message id
+# @param m the connection
+# @param id the message id requested (can be found on common.xml)
 def request_message(m, id):
     try:
         m.mav.command_long_send(
@@ -23,8 +28,9 @@ def request_message(m, id):
             id, 0, 0, 0, 0, 0, 0)
     except:
         print("interval not requested")
-
-
+# generates essential data by requesting mavlink messages and returns the data as a python dictionary
+# @param m the connection 
+# @return a dictionary of essential telemetry to be used by a GUI
 def display_data(m):
     while True:
         wait_heartbeat(m)
@@ -84,7 +90,8 @@ def display_data(m):
         }
         return exportedData
 
-
+# arms the drone using a command_long command
+# @param m the connection
 def arm(m):
     m.mav.command_long_send(
         m.target_system,
@@ -92,8 +99,8 @@ def arm(m):
         mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
         0,
         1, 21196, 0, 0, 0, 0, 0)
-
-
+# disarms the drone using a command_long command
+# @param m the connection
 def disarm(m):
     m.mav.command_long_send(
         m.target_system,
@@ -101,8 +108,8 @@ def disarm(m):
         mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
         0,
         0, 0, 0, 0, 0, 0, 0)
-
-
+# reboots the autopilot using a command_long command
+# param m the connection
 def reboot(m):
     m.mav.command_long_send(
         m.target_system,
