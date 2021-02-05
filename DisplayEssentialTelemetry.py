@@ -13,26 +13,13 @@ class SimpleGUI:
         style = Style()
         style.configure("BW.TLabel", foreground="white", background="#2a2b2e")
         #----#
-        self.altVar = StringVar()
-        self.alt = Label(self.root, text=self.altVar, style="BW.TLabel")
-        
-        self.airspdVar = StringVar()
-        self.airspd = Label(self.root, text=self.airspdVar, style="BW.TLabel")
-
-        self.grndspdVar = StringVar()
-        self.grndspd = Label(self.root, text=self.grndspdVar, style="BW.TLabel")
-
-        self.hdgVar = StringVar()
-        self.hdg = Label(self.root, text=self.hdgVar, style="BW.TLabel")
-
-        self.latLongVar = StringVar()
-        self.latLong = Label(self.root, text=self.latLongVar, style="BW.TLabel")
-        
-        self.voltVar = StringVar()
-        self.volt = Label(self.root, text=self.voltVar, style="BW.TLabel")
-
-        self.fltModVar = StringVar()
-        self.fltMod = Label(self.root, text=self.fltModVar, style="BW.TLabel")
+        self.alt = Label(self.root, text='', style="BW.TLabel")
+        self.airspd = Label(self.root, text='', style="BW.TLabel")
+        self.grndspd = Label(self.root, text='', style="BW.TLabel")
+        self.hdg = Label(self.root, text='', style="BW.TLabel")
+        self.latLong = Label(self.root, text='', style="BW.TLabel")
+        self.volt = Label(self.root, text='', style="BW.TLabel")
+        self.fltMod = Label(self.root, text='', style="BW.TLabel")
 
         self.alt.pack()
         self.airspd.pack()
@@ -46,13 +33,13 @@ class SimpleGUI:
         self.quit = True
 
     def refreshLabels(self, data):
-        self.altVar.set('Altitude: ' + data["altitude"])
-        self.airspdVar = 'Airspeed: ' + data["airspeed"]
-        self.grndspdVar = 'Groundspeed: ' + data["groundspeed"]
-        self.hdgVar = 'Heading: ' + data["heading"]
-        self.latVar = 'Lat + Long: ' + data["latitude"] + ' , ' + data["longitude"]
-        self.voltVar = 'Voltage: ' + data["voltage"]
-        self.fltModVar = 'Flight Mode: ' + data["flightMode"]
+        self.alt.configure(text = 'Altitude: ' + data["altitude"])
+        self.airspd.configure(text = 'Airspeed: ' + data["airspeed"])
+        self.grndspd.configure(text = 'Groundspeed: ' + data["groundspeed"])
+        self.hdg.configure(text = 'Heading: ' + data["heading"])
+        self.latLong.configure(text = 'Lat + Long: ' + data["latitude"] + ' , ' + data["longitude"])
+        self.volt.configure(text = 'Voltage: ' + data["voltage"])
+        self.fltMod.configure(text = 'Flight Mode: ' + data["flightMode"])
         #altitude, airspeed, groundspeed, heading, lat, long, voltage, flightMode
         self.alt.pack()
         self.airspd.pack()
@@ -71,12 +58,22 @@ class SimpleGUI:
         master = commands.connect("COM4")
         commands.wait_heartbeat(master)
 
+        exportedData = {
+            "altitude": '1', 
+            "airspeed": '2', 
+            "groundspeed": '3', 
+            "heading": '4',
+            "latitude": '5',
+            "longitude": '6',
+            "voltage": '7',
+            "flightMode": '8'
+        }
         #############################################################
         while not self.quit: ##flag to quit the application
             self.root.update_idletasks() #updates the root. same as root.mainloop() but safer and interruptable
             self.root.update() #same as above. This lest you stop the loop or add things to the loop.
             self.refreshLabels(commands.display_data(master))
-            time.sleep(0.6)
+            time.sleep(0.1)
 
 if __name__ == "__main__":
     app = SimpleGUI() ##creates instance of GUI class
