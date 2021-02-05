@@ -89,12 +89,16 @@ class SimpleGUI:
 
             #checks for established communications
             if self.comsEstablished:
-                self.refreshLabels(commands.display_data(self.master)) # will refresh labels if communications exist
+                try:
+                    self.refreshLabels(commands.display_data(self.master)) # will refresh labels if communications exist
+                except:
+                    print('Error. Attempting to retry.')
             else:
                 try: #if there is no connection, it attempts to make one
                     self.master = commands.connect("COM4")
                     self.errComs.pack_forget()
                     self.comsEstablished = True #if there is a connection is established, everything goes back to normal
+
                 except: #if an error occurs making the connection, it tries again every .1 second
                     self.errComs.pack()
                     self.comsEstablished = False
