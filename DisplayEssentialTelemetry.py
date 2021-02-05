@@ -46,7 +46,7 @@ class SimpleGUI:
         self.quit = True
 
     def refreshLabels(self, data):
-        self.altVar = 'Altitude: ' + data["altitude"]
+        self.altVar.set('Altitude: ' + data["altitude"])
         self.airspdVar = 'Airspeed: ' + data["airspeed"]
         self.grndspdVar = 'Groundspeed: ' + data["groundspeed"]
         self.hdgVar = 'Heading: ' + data["heading"]
@@ -54,6 +54,13 @@ class SimpleGUI:
         self.voltVar = 'Voltage: ' + data["voltage"]
         self.fltModVar = 'Flight Mode: ' + data["flightMode"]
         #altitude, airspeed, groundspeed, heading, lat, long, voltage, flightMode
+        self.alt.pack()
+        self.airspd.pack()
+        self.grndspd.pack()
+        self.hdg.pack()
+        self.latLong.pack()
+        self.volt.pack()
+        self.fltMod.pack()
     
     def run(self): ##main part of the application
         self.root.configure(bg="#2a2b2e") #sets the background to white rather than default gray.
