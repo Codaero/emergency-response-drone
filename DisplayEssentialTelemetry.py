@@ -93,6 +93,7 @@ class SimpleGUI:
                     self.refreshLabels(commands.display_data(self.master)) # will refresh labels if communications exist
                 except:
                     print('Error. Attempting to retry.')
+                    self.comsEstablished = False
             else:
                 try: #if there is no connection, it attempts to make one
                     self.master = commands.connect("COM4")
