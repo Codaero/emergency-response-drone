@@ -26,8 +26,9 @@ def request_message(m, id):
             mavutil.mavlink.MAV_CMD_REQUEST_MESSAGE,
             0,
             id, 0, 0, 0, 0, 0, 0)
-    except:
-        print("interval not requested")
+        return m.recv_match(type='SYS_STATUS', blocking=True)
+    except Exception as e:
+        print(e)
 # generates essential data by requesting mavlink messages and returns the data as a python dictionary
 # @param m the connection 
 # @return a dictionary of essential telemetry to be used by a GUI
@@ -117,3 +118,26 @@ def reboot(m):
         mavutil.mavlink.MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN,
         0,
         1, 0, 0, 0, 0, 0, 0)
+
+#sets a waypoint on the drone given the latitude and longitude
+# param m the connection
+# param lat the latitude
+# param long the longitude
+def waypoint(m, lat, long):
+    mode_id = float(m.mode_mapping()['MISSION'])
+    change_mode(m, mode_id)
+    m.mav.command_long_send(
+        m.target_system,
+        m.target_component,
+        mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,
+        0,
+        40, 10, 0, 0, lat, long, 121.92)
+def change_mode(m, mode):
+    m.set_mode('MISSION')
+    while True:
+        ack_msg = m.recv_match(type='COMMAND_ACK', blocking=True)
+        ack_msg = ack_msg.to_dict()
+        if ack_msg['command'] != mavutil.mavlink.MAVLINK_MSG_ID_SET_MODE:
+            continue
+        print(mavutil.mavlink.enums['MAV_RESULT'][ack_msg['result']].description)
+        break
