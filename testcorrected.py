@@ -13,7 +13,7 @@ from pymavlink import mavutil
 #  it's possible to add a new output port in http:192.168.2.2:2770/mavproxy as a new line.
 #  E.g: --out udpbcast:192.168.2.255:yourport
 
-master = mavutil.mavlink_connection('COM4')
+master = mavutil.mavlink_connection('COM7')
 
 
 master.mav.command_long_send(
@@ -28,10 +28,9 @@ master.mav.command_long_send(
 
 while True:
     try:
-         # if master.recv_match().to_dict().get('mavpackettype') == "VFR_HUD": 
-             print(master.recv_match().to_dict())
-             print("\n \n \n")
+        # if master.recv_match().to_dict().get('mavpackettype') == "VFR_HUD":
+        print(master.recv_match().to_dict())
+        print("\n \n \n")
     except:
         pass
-    time.sleep(0.01) #frequency of trying to get data
-
+    time.sleep(0.01)  # frequency of trying to get data
