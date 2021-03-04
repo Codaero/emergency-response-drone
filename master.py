@@ -18,7 +18,11 @@ class SimpleGUI:
         # comm port selection
         self.comPortSelected = False
         self.comPortNum = StringVar()
+<<<<<<< Updated upstream
         comPorts = ['2', '3', '4', '5', '6', '7', '8']
+=======
+        comPorts = ['2','3','4','5','6','7','8']
+>>>>>>> Stashed changes
 
         self.popupMenu = OptionMenu(
             self.root, self.comPortNum, comPorts[2], *comPorts)
@@ -135,8 +139,12 @@ class SimpleGUI:
                     self.popupMenu.pack()
                     self.comsEstablished = False
                     print("COM" + self.comPortNum.get())
+<<<<<<< Updated upstream
                 time.sleep(0.5)
 
+=======
+                time.sleep(0.1)
+>>>>>>> Stashed changes
 
 if __name__ == "__main__":
     app = SimpleGUI("COM4")  # creates instance of GUI class
