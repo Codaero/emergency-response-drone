@@ -9,16 +9,31 @@ class SimpleGUI:
         #Instance variables
         self.root = Tk()
         self.quit = False
+
+        #communcation established
         self.comsEstablished = True
+
+        #comm port selection
+        self.comPortSelected = False
+        self.comPortNum = StringVar()
+        comPorts = ['1','2','3','4','5','6','7','8']
+
+        self.popupMenu = OptionMenu(self.root, self.comPortNum, comPorts[3], *comPorts)
+        self.popupMenu.pack()
         
         #attempt to establish connection
         self.errComs = Label(self.root, text='Communication not established. Trying again.', style="BW.TLabel")
         try:
-            self.master = commands.connect("COM4")
+            self.master = commands.connect("COM" + self.comPortNum.get())
             self.errComs.pack_forget()
+            self.popupMenu.pack_forget()
+            self.arm.pack()
+            self.disarm.pack()
         except:
             self.errComs.pack()
+            self.popupMenu.pack()
             self.comsEstablished = False
+            print("COM" + self.comPortNum.get())
 
         #----#
         #Styling
@@ -46,9 +61,6 @@ class SimpleGUI:
         #Arming buttons
         self.arm = Button(self.root, text='Arm', command= lambda: commands.arm(self.master))
         self.disarm = Button(self.root, text='Disarm', command= lambda: commands.disarm(self.master))
-
-        self.arm.pack()
-        self.disarm.pack()
 
     def quitting(self): ##to set the quit flag
         self.quit = True
@@ -96,13 +108,19 @@ class SimpleGUI:
                     self.comsEstablished = False
             else:
                 try: #if there is no connection, it attempts to make one
-                    self.master = commands.connect("COM4")
+                    self.master = commands.connect("COM" + self.comPortNum.get())
                     commands.wait_heartbeat(self.master)
+                    self.errComs.pack_forget()
+                    self.popupMenu.pack_forget()
+                    self.arm.pack()
+                    self.disarm.pack()
                     self.errComs.pack_forget()
                     self.comsEstablished = True #if there is a connection is established, everything goes back to normal
                 except: #if an error occurs making the connection, it tries again every .1 second
                     self.errComs.pack()
+                    self.popupMenu.pack()
                     self.comsEstablished = False
+                    print("COM" + self.comPortNum.get())
             time.sleep(0.1)
 
 if __name__ == "__main__":
