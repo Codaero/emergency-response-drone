@@ -18,11 +18,7 @@ class SimpleGUI:
         # comm port selection
         self.comPortSelected = False
         self.comPortNum = StringVar()
-<<<<<<< Updated upstream
         comPorts = ['2', '3', '4', '5', '6', '7', '8']
-=======
-        comPorts = ['2','3','4','5','6','7','8']
->>>>>>> Stashed changes
 
         self.popupMenu = OptionMenu(
             self.root, self.comPortNum, comPorts[2], *comPorts)
