@@ -139,12 +139,8 @@ class SimpleGUI:
                     self.popupMenu.pack()
                     self.comsEstablished = False
                     print("COM" + self.comPortNum.get())
-<<<<<<< Updated upstream
                 time.sleep(0.5)
 
-=======
-                time.sleep(0.1)
->>>>>>> Stashed changes
 
 if __name__ == "__main__":
     app = SimpleGUI("COM4")  # creates instance of GUI class
