@@ -139,7 +139,7 @@ def reboot(m):
 # param long the longitude
 
 
-def waypoint(m, lat, long):
+def waypoint(m, lat, long, altitude):
     mode_id = float(m.mode_mapping()['MISSION'])
     change_mode(m, mode_id)
     m.mav.command_long_send(
@@ -147,16 +147,16 @@ def waypoint(m, lat, long):
         m.target_component,
         mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,
         0,
-        40, 10, 0, 0, lat, long, 121.92)
+        40, 10, 0, 0, lat, long, altitude)
 
 
 def change_mode(m, mode):
-    m.set_mode('MISSION')
-    while True:
-        ack_msg = m.recv_match(type='COMMAND_ACK', blocking=True)
-        ack_msg = ack_msg.to_dict()
-        if ack_msg['command'] != mavutil.mavlink.MAVLINK_MSG_ID_SET_MODE:
-            continue
-        print(mavutil.mavlink.enums['MAV_RESULT']
-              [ack_msg['result']].description)
-        break
+    m.set_mode(mode)
+    # while True:
+    #     ack_msg = m.recv_match(type='COMMAND_ACK', blocking=True)
+    #     ack_msg = ack_msg.to_dict()
+    #     if ack_msg['command'] != mavutil.mavlink.MAVLINK_MSG_ID_SET_MODE:
+    #         continue
+    #     print(mavutil.mavlink.enums['MAV_RESULT']
+    #           [ack_msg['result']].description)
+    #     break
