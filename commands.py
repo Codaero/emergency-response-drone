@@ -159,8 +159,8 @@ def change_mode(m, mode):
     #     print(mavutil.mavlink.enums['MAV_RESULT']
     #           [ack_msg['result']].description)
     #     break
-def set_mission(m)
+def set_mission(m):
     m.mav.command_long_send(
-    m.target_system, master.target_component,
+    m.target_system, m.target_component,
     mavutil.mavlink.MAV_CMD_DO_SET_MODE, 0,
     157, 4, 4, 0, 0, 0, 0)
