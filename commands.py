@@ -140,7 +140,7 @@ def reboot(m):
 
 
 def waypoint(m, lat, long, altitude):
-    m.set_mission(m)
+    set_mission(m)
     m.mav.command_long_send(
         m.target_system,
         m.target_component,
