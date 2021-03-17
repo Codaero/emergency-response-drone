@@ -1,5 +1,6 @@
 import time
 from pymavlink import mavutil
+from pymavlink import mavwp
 
 # This method opens a connection and returns an object corresponding to that connection. baud rate defaults to 57600.
 # @param port the port to connect to (using "COM4")
@@ -137,7 +138,8 @@ def reboot(m):
 # param m the connection
 # param lat the latitude
 # param long the longitude
-
+def takeoff(m, lat, long, altitude):
+    change_mode(m, 'MISSION')
 
 def waypoint(m, lat, long, altitude):
     set_mission(m)
@@ -146,7 +148,7 @@ def waypoint(m, lat, long, altitude):
         m.target_component,
         mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,
         0,
-        40, 10, 0, 0, lat, long, altitude)
+        40, 2, 0, 'NaN', lat, long, altitude)
 
 
 def change_mode(m, mode):
@@ -164,3 +166,57 @@ def set_mission(m):
     m.target_system, m.target_component,
     mavutil.mavlink.MAV_CMD_DO_SET_MODE, 0,
     157, 4, 4, 0, 0, 0, 0)
+def set_home(m, home_location, altitude):
+    print('--- ', m.target_system, ',', m.target_component)
+    m.mav.command_long_send(
+        m.target_system, m.target_component,
+        mavutil.mavlink.MAV_CMD_DO_SET_HOME,
+        1, # set position
+        0, # param1
+        0, # param2
+        0, # param3
+        0, # param4
+        home_location[0], # lat
+        home_location[1], # lon
+        altitude) 
+
+def upload_mission(m, lat, longit, altitude):
+    home_location = (41.7953585787946, -88.16649693012819)
+    # start a UDP connection , port #: 14550: ON HOLD 
+    # create wploader object 
+    wp = mavwp.MAVWPLoader()
+    # create and add home waypoint 
+    
+    # create and add takeoff mission item 
+    takeoffItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0, 24,0, 1, 0, 0, 0.5, 0, 0, 0, 5) # may need to reset origin if this doesn't work
+    
+    wp.add(takeoffItem)
+    # create and add loiter mission item (maybe do later?)
+    # create and add waypoint mission item 
+    waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, 
+    m.target_component, 1, 0 , 16, 0, 1,
+    0, 2, 0, 0, lat, longit, altitude)
+    wp.add(waypointItem)
+    # create and add land mission item 
+    landItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system,
+    m.target_component, 2, 0, 21, 0, 1, 0,0,0,0, lat, longit, 0)
+    wp.add(landItem)
+    # send home and receive acknowledgment message 
+    set_home(m, home_location, 0)
+    msg = m.recv_match(type = ['COMMAND_ACK'],blocking = True)
+    print(msg)
+    print('Set home location: {0} {1}'.format(home_location[0],home_location[1]))
+    time.sleep(1)
+    # clear all mission items from pixhawk via clear_all_send
+    
+    m.waypoint_clear_all_send()
+    m.waypoint_count_send(wp.count())
+
+    for i in range(wp.count()):
+        msg = m.recv_match(type=['MISSION_REQUEST_INT'], blocking=True)
+        print(msg)
+        m.mav.send(wp.wp(msg.seq))
+        print('Sending waypoint')
+    #checking if mission upload is completed
+    mission_ack = m.recv_match(type=['MISSION_ACK'], blocking=True)
+    print(mission_ack)
