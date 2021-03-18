@@ -181,28 +181,31 @@ def set_home(m, home_location, altitude):
         altitude) 
 
 def upload_mission(m, lat, longit, altitude):
+    altitude+=216.2
     home_location = (41.7953585787946, -88.16649693012819)
     # start a UDP connection , port #: 14550: ON HOLD 
     # create wploader object 
     wp = mavwp.MAVWPLoader()
     # create and add home waypoint 
-    
+    homewaypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, 
+    m.target_component, 0, 0 , 16, 0, 1,
+    0, 2, 0, 0, 417953585, -881664969, 219.2)
+    wp.add(homewaypointItem)
     # create and add takeoff mission item 
-    takeoffItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0, 24,0, 1, 0, 0, 0.5, 0, 0, 0, 5) # may need to reset origin if this doesn't work
-    
+    takeoffItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 1, 0, 24,0, 1, 0, 0, 0.5, 0, 0, 0, 5) # may need to reset origin if this doesn't work
     wp.add(takeoffItem)
     # create and add loiter mission item (maybe do later?)
     # create and add waypoint mission item 
     waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, 
-    m.target_component, 1, 0 , 16, 0, 1,
+    m.target_component, 2, 0 , 16, 0, 1,
     0, 2, 0, 0, lat, longit, altitude)
     wp.add(waypointItem)
     # create and add land mission item 
     landItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system,
-    m.target_component, 2, 0, 21, 0, 1, 0,0,0,0, lat, longit, 0)
+    m.target_component, 3, 0, 21, 0, 1, 0,0,0,0, lat, longit, 0)
     wp.add(landItem)
     # send home and receive acknowledgment message 
-    set_home(m, home_location, 0)
+    set_home(m, home_location, 222.2)
     msg = m.recv_match(type = ['COMMAND_ACK'],blocking = True)
     print(msg)
     print('Set home location: {0} {1}'.format(home_location[0],home_location[1]))
@@ -210,12 +213,16 @@ def upload_mission(m, lat, longit, altitude):
     # clear all mission items from pixhawk via clear_all_send
     
     m.waypoint_clear_all_send()
+    wait_heartbeat(m)
     m.waypoint_count_send(wp.count())
-
+    msg = m.recv_match(type=['MISSION_ACK'], blocking=True)
+    print(msg)
     for i in range(wp.count()):
-        msg = m.recv_match(type=['MISSION_REQUEST_INT'], blocking=True)
+        msg = m.recv_match(type=['MISSION_REQUEST'], blocking=True, timeout=250)
         print(msg)
         m.mav.send(wp.wp(msg.seq))
+        # msg = m.recv_match(type=['MAV_CMD_ACK'], blocking=True, timeout=250)
+        # print(msg)
         print('Sending waypoint')
     #checking if mission upload is completed
     mission_ack = m.recv_match(type=['MISSION_ACK'], blocking=True)

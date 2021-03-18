@@ -66,7 +66,7 @@ def cmd_get_home():
 
 
 # Send Home location
-cmd_set_home(home_location, 0)
+cmd_set_home(home_location, 225.2)
 msg = mav.recv_match(type=['COMMAND_ACK'],blocking=True)
 print (msg)
 print ('Set home location: {0} {1}'.format(home_location[0], home_location[1]))
