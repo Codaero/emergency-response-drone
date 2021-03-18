@@ -218,7 +218,7 @@ def upload_mission(m, lat, longit, altitude):
     msg = m.recv_match(type=['MISSION_ACK'], blocking=True)
     print(msg)
     for i in range(wp.count()):
-        msg = m.recv_match(type=['MISSION_REQUEST'], blocking=True, timeout=250)
+        msg = m.recv_match(type=['MISSION_REQUEST_INT'], blocking=True, timeout=250)
         print(msg)
         m.mav.send(wp.wp(msg.seq))
         # msg = m.recv_match(type=['MAV_CMD_ACK'], blocking=True, timeout=250)
