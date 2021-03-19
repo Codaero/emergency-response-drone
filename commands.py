@@ -162,10 +162,17 @@ def change_mode(m, mode):
     #           [ack_msg['result']].description)
     #     break
 def set_mission(m):
-    m.mav.command_long_send(
-    m.target_system, m.target_component,
-    mavutil.mavlink.MAV_CMD_DO_SET_MODE, 0,
-    157, 4, 4, 0, 0, 0, 0)
+    PX4_MAV_MODE = 209.0
+    PX4_CUSTOM_MAIN_MODE_AUTO = 4.0
+    PX4_CUSTOM_SUB_MODE_AUTO_MISSION = 4.0
+    PX4_CUSTOM_SUB_MODE_AUTO_RTL = 5.0
+
+    m.mav.command_long_send(1, 1, mavutil.mavlink.MAV_CMD_DO_SET_MODE, 0,
+                            PX4_MAV_MODE,
+                            PX4_CUSTOM_MAIN_MODE_AUTO, PX4_CUSTOM_SUB_MODE_AUTO_MISSION, 0, 0, 0, 0)
+
+    msg = m.recv_match(type=['COMMAND_ACK'],blocking=True)
+    print (msg)
 def set_home(m, home_location, altitude):
     print('--- ', m.target_system, ',', m.target_component)
     m.mav.command_long_send(
@@ -191,8 +198,8 @@ def upload_mission(m, lat, longit, altitude):
         # 0, 2, 0, 0, 417953585, -881664969, 222.2)
         # wp.add(homewaypointItem)
     # create and add takeoff mission item 
-        #takeoffItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0, 22,0, 1, 0, 0, 0, 0, 417953585, -881664969, 5) # may need to reset origin if this doesn't work
-        #wp.add(takeoffItem)
+        # takeoffItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0, 22,0, 1, 0, 0, 0, 0, 417953585, -881664969, 5) # may need to reset origin if this doesn't work
+        # wp.add(takeoffItem)
     # create and add loiter mission item (maybe do later?)
     # create and add waypoint mission item 
     waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0 , 16, 0, 1, 10, 2, 0, 0, lat, longit, altitude)
@@ -222,7 +229,6 @@ def upload_mission(m, lat, longit, altitude):
         m.mav.send(wp.wp(msg.seq))
     msg = m.recv_match(type=['MISSION_ACK'], blocking=True)
     print(msg)
-        
     #checking if mission upload is completed
     # mission_ack = m.recv_match(type=['MISSION_ACK'], blocking=True)
     # print(mission_ack)
