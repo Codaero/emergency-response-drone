@@ -218,12 +218,12 @@ def upload_mission(m, lat, longit, altitude):
     msg = m.recv_match(type=['MISSION_ACK'], blocking=True)
     print(msg)
     for i in range(wp.count()):
-        msg = m.recv_match(type=['MISSION_REQUEST_INT'], blocking=True, timeout=250)
+        msg = m.recv_match(type=['MISSION_REQUEST_INT'], blocking=True, timeout=250) #if not receiving a message, change to Mission_Request and then change back 
         print(msg)
         m.mav.send(wp.wp(msg.seq))
-        # msg = m.recv_match(type=['MAV_CMD_ACK'], blocking=True, timeout=250)
+        # msg = m.recv_match(type=['MISSION_ACK'], blocking=True)
         # print(msg)
-        print('Sending waypoint')
+        print('Sending waypoint' + str(msg.seq))
     #checking if mission upload is completed
     mission_ack = m.recv_match(type=['MISSION_ACK'], blocking=True)
     print(mission_ack)
