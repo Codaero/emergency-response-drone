@@ -181,7 +181,7 @@ def set_home(m, home_location, altitude):
         altitude) 
 
 def upload_mission(m, lat, longit, altitude):
-    home_location = (41.7953585787946, -88.16649693012819)
+    home_location = (41.7829610, -88.1561630)
     # start a UDP connection , port #: 14550: ON HOLD 
     # create wploader object 
     wp = mavwp.MAVWPLoader()
@@ -197,14 +197,14 @@ def upload_mission(m, lat, longit, altitude):
     # create and add waypoint mission item 
     waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0 , 16, 0, 1, 10, 2, 0, 0, lat, longit, altitude)
     wp.add(waypointItem)
-    waypointItem2 = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 1, 0 , 16, 0, 1, 10, 2, 0, 0, 417957160, -881674920, altitude)
+    waypointItem2 = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 1, 0 , 16, 0, 1, 10, 2, 0, 0, 417830150, -881547790, altitude)
     wp.add(waypointItem2)
     # create and add land mission item 
         # landItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system,
         # m.target_component, 3, 0, 21, 0, 1, 0,0,0,0, lat, longit, 0)
         # wp.add(landItem)
     # send home and receive acknowledgment message 
-    set_home(m, home_location, 222.2)
+    set_home(m, home_location, 212)
     msg = m.recv_match(type = ['COMMAND_ACK'],blocking = True)
     print(msg)
     print('Set home location: {0} {1}'.format(home_location[0],home_location[1]))
