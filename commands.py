@@ -197,6 +197,8 @@ def upload_mission(m, lat, longit, altitude):
     # create and add waypoint mission item 
     waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0 , 16, 0, 1, 10, 2, 0, 0, lat, longit, altitude)
     wp.add(waypointItem)
+    waypointItem2 = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0 , 16, 0, 1, 10, 2, 0, 0, 417957160, -881674920, altitude)
+    wp.add(waypointItem2)
     # create and add land mission item 
         # landItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system,
         # m.target_component, 3, 0, 21, 0, 1, 0,0,0,0, lat, longit, 0)
@@ -218,8 +220,8 @@ def upload_mission(m, lat, longit, altitude):
         msg = m.recv_match(type=['MISSION_REQUEST_INT'], blocking=True, timeout=250) #if not receiving a message, change to Mission_Request and then change back 
         print(msg)
         m.mav.send(wp.wp(msg.seq))
-        msg = m.recv_match(type=['MISSION_ACK'], blocking=True)
-        print(msg)
+    msg = m.recv_match(type=['MISSION_ACK'], blocking=True)
+    print(msg)
         
     #checking if mission upload is completed
     # mission_ack = m.recv_match(type=['MISSION_ACK'], blocking=True)
