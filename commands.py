@@ -189,21 +189,19 @@ def upload_mission(m, lat, longit, altitude):
     # create and add home waypoint 
     homewaypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, 
     m.target_component, 0, 0 , 16, 0, 1,
-    0, 2, 0, 0, 417953585, -881664969, 219.2)
+    0, 2, 0, 0, 417953585, -881664969, 222.2)
     wp.add(homewaypointItem)
     # create and add takeoff mission item 
-    takeoffItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 1, 0, 24,0, 1, 0, 0, 0.5, 0, 0, 0, 5) # may need to reset origin if this doesn't work
+    takeoffItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 1, 0, 22,0, 1, 0, 0, 0, 0, 417953585, -881664969, 5) # may need to reset origin if this doesn't work
     wp.add(takeoffItem)
     # create and add loiter mission item (maybe do later?)
     # create and add waypoint mission item 
-    waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, 
-    m.target_component, 2, 0 , 16, 0, 1,
-    0, 2, 0, 0, lat, longit, altitude)
+    waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 2, 0 , 16, 0, 1, 10, 2, 0, 0, lat, longit, altitude)
     wp.add(waypointItem)
     # create and add land mission item 
-    landItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system,
-    m.target_component, 3, 0, 21, 0, 1, 0,0,0,0, lat, longit, 0)
-    wp.add(landItem)
+        # landItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system,
+        # m.target_component, 3, 0, 21, 0, 1, 0,0,0,0, lat, longit, 0)
+        # wp.add(landItem)
     # send home and receive acknowledgment message 
     set_home(m, home_location, 222.2)
     msg = m.recv_match(type = ['COMMAND_ACK'],blocking = True)
@@ -217,7 +215,8 @@ def upload_mission(m, lat, longit, altitude):
     m.waypoint_count_send(wp.count())
     msg = m.recv_match(type=['MISSION_ACK'], blocking=True)
     print(msg)
-    for i in range(wp.count()):
+    # for i in range(wp.count()):
+    while True: 
         msg = m.recv_match(type=['MISSION_REQUEST_INT'], blocking=True, timeout=250) #if not receiving a message, change to Mission_Request and then change back 
         print(msg)
         m.mav.send(wp.wp(msg.seq))
