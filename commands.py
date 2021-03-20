@@ -198,9 +198,9 @@ def upload_mission(m, lat, longit, altitude):
         #wp.add(takeoffItem)
     # create and add loiter mission item (maybe do later?)
     # create and add waypoint mission item 
-    waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0 , 16, 0, 1, 10, 2, 0, 0, lat, longit, altitude)
+    waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 0, 0 , 16, 0, 1, 5, 2, 0, 0, lat, longit, altitude)
     wp.add(waypointItem)
-    waypointItem2 = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 1, 0 , 16, 0, 1, 10, 2, 0, 0, 417830150, -881547790, altitude)
+    waypointItem2 = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system, m.target_component, 1, 0 , 16, 0, 1, 5, 2, 0, 0, 417829980, -881555770, altitude)
     wp.add(waypointItem2)
     # create and add land mission item 
         # landItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system,
