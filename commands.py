@@ -153,6 +153,9 @@ def waypoint(m, lat, long, altitude):
 
 def change_mode(m, mode):
     m.set_mode(mode)
+    msg = m.recv_match(type=['COMMAND_ACK'],blocking=True)
+    print (msg)
+
     # while True:
     #     ack_msg = m.recv_match(type='COMMAND_ACK', blocking=True)
     #     ack_msg = ack_msg.to_dict()
