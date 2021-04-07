@@ -265,3 +265,5 @@ def beginDelivery(m):
     currentMissionSeq = checkCurrentMissionSequence(m)
     while currentMissionSeq < sequenceCount:
         currentMissionSeq = checkCurrentMissionSequence(m)
+    landDrone(m)
+    sequenceCount = None  # resets the sequence count after mission
