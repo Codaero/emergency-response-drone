@@ -295,10 +295,14 @@ def getCoords(m):
     collection = db["MapData"]
     pprint(collection.find_one()["Update"])
     if (collection.find_one()["Update"] == 1):
+        myquery = {}
+        newvalues = { "$set": { "Update": 0 } }
+        collection.update_one(myquery, newvalues)
+
         x = collection.find_one()["Latitude"]
         y = collection.find_one()["Longitude"]
         upload_mission(m, x, y, 5)
         #beginDelivery(m)
-        myquery = {}
-        newvalues = { "$set": { "Update": 0 } }
-        collection.update_one(myquery, newvalues)
+        
+        
+        

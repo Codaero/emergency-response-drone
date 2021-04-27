@@ -135,7 +135,6 @@ class SimpleGUI:
                     self.popupMenu.pack()
                     self.comsEstablished = False
                     print("COM" + self.comPortNum.get())
-                time.sleep(0.5)
 
 
 if __name__ == "__main__":
