@@ -66,6 +66,7 @@ def request_message(m, id):
 def display_data(m):
     while True:
         wait_heartbeat(m)
+        getCoords(m)
         request_message(m, 24)
         request_message(m, 74)
         request_message(m, 141)
