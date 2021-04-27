@@ -3,7 +3,7 @@ from pymongo import MongoClient
 # pprint library is used to make the output look more pretty
 from pprint import pprint
 # connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
-client = MongoClient("mongodb+srv://pushupsGod:drones@cluster0.pdg4g.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+client = MongoClient("mongodb+srv://affinity:drones@testing.jwh3b.mongodb.net/test?authSource=admin&replicaSet=atlas-4ltrda-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true")
 db= client["Drones"]
 collection = db["MapData"]
 # Issue the serverStatus command and print the results
