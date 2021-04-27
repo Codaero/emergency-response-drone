@@ -1,4 +1,7 @@
 from re import L, M
+from pymongo import MongoClient
+# pprint library is used to make the output look more pretty
+from pprint import pprint
 import time
 from pymavlink import mavutil
 from pymavlink import mavwp
@@ -211,7 +214,7 @@ def set_home(m, home_location, altitude):
 
 
 def upload_mission(m, lat, longit, altitude):
-    home_location = (41.7829610, -88.1561630)
+    home_location = (41.790328, -88.106085)
     # start a UDP connection , port #: 14550: ON HOLD
     # create wploader object
     wp = mavwp.MAVWPLoader()
@@ -225,8 +228,10 @@ def upload_mission(m, lat, longit, altitude):
     # wp.add(takeoffItem)
     # create and add loiter mission item (maybe do later?)
     # create and add waypoint mission item
+    latitude = lat * 10000000
+    longitude = longit* 10000000
     waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(
-        m.target_system, m.target_component, 0, 0, 16, 0, 1, 5, 2, 0, 0, lat, longit, altitude)
+        m.target_system, m.target_component, 0, 0, 16, 0, 1, 5, 2, 0, 0, latitude, longitude, altitude)
     wp.add(waypointItem)
     # waypointItem2 = mavutil.mavlink.MAVLink_mission_item_int_message(
     #     m.target_system, m.target_component, 1, 0, 16, 0, 1, 5, 2, 0, 0, 417829980, -881555770, altitude)
@@ -283,3 +288,16 @@ def beginDelivery(m):
         currentMissionSeq = checkCurrentMissionSequence(m)
     landDrone(m)
     sequenceCount = None  # resets the sequence count after mission
+def getCoords(m):
+    client = MongoClient("mongodb+srv://affinity:drones@testing.jwh3b.mongodb.net/test?authSource=admin&replicaSet=atlas-4ltrda-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true")
+    db= client["Drones"]
+    collection = db["MapData"]
+    pprint(collection.find_one()["Update"])
+    if (collection.find_one()["Update"] == 1):
+        x = collection.find_one()["Latitude"]
+        y = collection.find_one()["Longitude"]
+        upload_mission(m, x, y, 5)
+        #beginDelivery(m)
+        myquery = {}
+        newvalues = { "$set": { "Update": 0 } }
+        collection.update_one(myquery, newvalues)
