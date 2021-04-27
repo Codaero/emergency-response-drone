@@ -1,7 +1,9 @@
-from re import M
+from re import L, M
 import time
 from pymavlink import mavutil
 from pymavlink import mavwp
+import cv2
+
 
 # This method opens a connection and returns an object corresponding to that connection. baud rate defaults to 57600.
 # @param port the port to connect to (using "COM4")
@@ -15,6 +17,20 @@ def connect(port):
 
 # waits for a heartbeat message from the connection before continuing.
 # @param m the connection
+
+
+def playLiveVideo():
+    video = cv2.VideoCapture("rtsp://104.236.89.5:8554/pi")
+
+    while True:
+        _, frame = video.read()
+        cv2.imshow("RTSP", frame)
+        k = cv2.waitKey(1)
+        if k == ord('q'):
+            break
+
+    video.release()
+    cv2.destroyAllWindows()
 
 
 def wait_heartbeat(m):

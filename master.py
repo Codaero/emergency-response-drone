@@ -2,7 +2,7 @@ import commands
 import time
 from tkinter import *
 from tkinter.ttk import *
-import pymavlink
+import threading
 
 
 class SimpleGUI:
@@ -141,7 +141,8 @@ class SimpleGUI:
 if __name__ == "__main__":
     app = SimpleGUI("COM4")  # creates instance of GUI class
     try:
-        app.run()  # starts the application
+        threading.Thread(target=commands.playLiveVideo).start()
+        app.run()
     except KeyboardInterrupt:
         app.quitting()  # safely quits the application when crtl+C is pressed
     except:
