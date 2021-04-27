@@ -1,0 +1,7 @@
+TCP:
+
+ffmpeg -f video4linux2 -input_format h264 -video_size 1280x720 -framerate 30 -i /dev/video0 -vcodec copy -f rtsp rtsp://104.236.89.5:8554/pi
+
+UDP:
+
+ffmpeg -f video4linux2 -input_format h264 -video_size 1280x720 -framerate 30 -i /dev/video0 -vcodec copy -f rtsp -rtsp_transport udp rtsp://104.236.89.5:8554/pi
