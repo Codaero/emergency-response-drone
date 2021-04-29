@@ -230,19 +230,12 @@ def upload_mission(m, lat, longit, altitude):
     # create and add loiter mission item (maybe do later?)
     # create and add waypoint mission item
     latitude = lat * 10000000
-    longitude = longit* 10000000
+    longitude = longit * 10000000
     waypointItem = mavutil.mavlink.MAVLink_mission_item_int_message(
-        m.target_system, m.target_component, 0, 0, 16, 0, 1, 5, 2, 0, 0, latitude, longitude, altitude)
+        m.target_system, m.target_component, 0, 0, 16, 0, 1, 5, 2, 0, 0, int(latitude), int(longitude), altitude)
     wp.add(waypointItem)
-    # waypointItem2 = mavutil.mavlink.MAVLink_mission_item_int_message(
-    #     m.target_system, m.target_component, 1, 0, 16, 0, 1, 5, 2, 0, 0, 417829980, -881555770, altitude)
-    # wp.add(waypointItem2)
-    # create and add land mission item
-    # landItem = mavutil.mavlink.MAVLink_mission_item_int_message(m.target_system,
-    # m.target_component, 3, 0, 21, 0, 1, 0,0,0,0, lat, longit, 0)
-    # wp.add(landItem)
-    # send home and receive acknowledgment message
-    set_home(m, home_location, 212)
+
+    set_home(m, home_location, 220)
     msg = m.recv_match(type=['COMMAND_ACK'], blocking=True)
     print(msg)
     print('Set home location: {0} {1}'.format(
@@ -289,20 +282,20 @@ def beginDelivery(m):
         currentMissionSeq = checkCurrentMissionSequence(m)
     landDrone(m)
     sequenceCount = None  # resets the sequence count after mission
+
+
 def getCoords(m):
-    client = MongoClient("mongodb+srv://affinity:drones@testing.jwh3b.mongodb.net/test?authSource=admin&replicaSet=atlas-4ltrda-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true")
-    db= client["Drones"]
+    client = MongoClient(
+        "mongodb+srv://affinity:drones@testing.jwh3b.mongodb.net/test?authSource=admin&replicaSet=atlas-4ltrda-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true")
+    db = client["Drones"]
     collection = db["MapData"]
     pprint(collection.find_one()["Update"])
     if (collection.find_one()["Update"] == 1):
         myquery = {}
-        newvalues = { "$set": { "Update": 0 } }
+        newvalues = {"$set": {"Update": 0}}
         collection.update_one(myquery, newvalues)
 
         x = collection.find_one()["Latitude"]
         y = collection.find_one()["Longitude"]
         upload_mission(m, x, y, 5)
-        #beginDelivery(m)
-        
-        
-        
+        # beginDelivery(m)

@@ -18,10 +18,10 @@ class SimpleGUI:
         # comm port selection
         self.comPortSelected = False
         self.comPortNum = StringVar()
-        comPorts = ['2', '3', '4', '5', '6', '7', '8']
+        comPorts = ['1', '2', '3', '4', '5', '6', '7', '8']
 
         self.popupMenu = OptionMenu(
-            self.root, self.comPortNum, comPorts[2], *comPorts)
+            self.root, self.comPortNum, comPorts[3], *comPorts)
         self.popupMenu.pack()
 
         # attempt to establish connection
@@ -135,6 +135,7 @@ class SimpleGUI:
                     self.popupMenu.pack()
                     self.comsEstablished = False
                     print("COM" + self.comPortNum.get())
+                time.sleep(0.5)
 
 
 if __name__ == "__main__":
