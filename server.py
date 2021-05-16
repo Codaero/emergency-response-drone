@@ -119,13 +119,15 @@ def randomNumberGenerator():
 
         if land is True:
             commands.landDrone(master)
-
+            land = False
         if arm is True:
             commands.arm(master)
             print('ARMING')
+            arm = False
         if disarm is True:
             commands.disarm(master)
             print('DISARMING')
+            disarm = False
 
 @app.route('/')
 def index():
