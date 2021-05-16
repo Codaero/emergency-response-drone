@@ -24,6 +24,8 @@ latTemp = 0
 lngTemp = 0
 updated = False
 land = False
+arm = False
+disarm = False
 
 def randomNumberGenerator():
     """
@@ -40,7 +42,8 @@ def randomNumberGenerator():
         global latTemp
         global updated
         global land
-
+        global arm
+        global disarm
 
 
         if ('.' in data["altitude"]):
@@ -117,6 +120,13 @@ def randomNumberGenerator():
         if land is True:
             commands.landDrone(master)
 
+        if arm is True:
+            commands.arm(master)
+            print('ARMING')
+        if disarm is True:
+            commands.disarm(master)
+            print('DISARMING')
+
 @app.route('/')
 def index():
     #only by sending this page first will the client be connected to the socketio instance
@@ -148,11 +158,22 @@ def waypointSubmit(jsontext, methods=['GET', 'POST']):
     updated = True
 
 @socketio.on('land', namespace='/dir')
-def waypointSubmit(msg, methods=['GET', 'POST']):
+def land(msg, methods=['GET', 'POST']):
     global land
     data = msg
     print('LANDING DRONE')
     land = data["land"]
+
+@socketio.on('arm', namespace='/dir')
+def arm(msg, methods=['GET', 'POST']):
+    global arm
+    arm = True
+
+@socketio.on('disarm', namespace='/dir')
+def disarm(msg, methods=['GET', 'POST']):
+    global disarm
+    disarm = True
+
 
 if __name__ == "__main__":
     socketio.run(app)  # creates instance of GUI class

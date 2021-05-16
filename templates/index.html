@@ -183,6 +183,18 @@
             data = {"land": true}
             socket.emit('land', data, namespace = '/data')
         }
+        function arm() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/dir');
+            console.log('Submitted.')
+            data = {"arm": true}
+            socket.emit('arm', data, namespace = '/data')
+        }
+        function disarm() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/dir');
+            console.log('Submitted.')
+            data = {"disarm": true}
+            socket.emit('disarm', data, namespace = '/data')
+        }
     </script>
 
     <style type="text/css" media="all">
@@ -211,6 +223,8 @@
     <div id="map"></div>
     <button id="wpsubmit" onclick="submitLatLng();">Waypoint Submit</button>
     <button id="landsubmit" onclick="land();">Land</button>
+    <button id="arm" onclick="arm();">Arm</button>
+    <button id="disarm" onclick="disarm();">Disarm</button>
 
     <div class="container" id="content">
         <div class="row">
