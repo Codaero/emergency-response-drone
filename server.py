@@ -23,6 +23,7 @@ thread_stop_event = Event()
 latTemp = 0
 lngTemp = 0
 updated = False
+land = False
 
 def randomNumberGenerator():
     """
@@ -35,6 +36,12 @@ def randomNumberGenerator():
 
     while not thread_stop_event.isSet():
         data = commands.display_data(master)
+        global lngTemp
+        global latTemp
+        global updated
+        global land
+
+
 
         if ('.' in data["altitude"]):
             i = 0
@@ -101,8 +108,14 @@ def randomNumberGenerator():
             print('Updated.')
             print(latTemp)
             print(lngTemp)
+            commands.upload_mission(master, latTemp, lngTemp, 5)
+            commands.beginDelivery(master)
+            updated = False
         else:
             print('No new data.')
+
+        if land is True:
+            commands.landDrone(master)
 
 @app.route('/')
 def index():
@@ -125,15 +138,21 @@ def test_disconnect():
 
 @socketio.on('waypoint', namespace='/dir')
 def waypointSubmit(jsontext, methods=['GET', 'POST']):
-        data = json.loads(jsontext)
-        print('RECEIVED WAYPOINT DATA: ' + str(data["lat"]) + ', ' + str(data["lng"]))
-        global latTemp
-        global lngTemp
-        global updated
-        latTemp = data["lat"]
-        lngTemp = data["lng"]
-        updated = True
-        
+    data = json.loads(jsontext)
+    print('RECEIVED WAYPOINT DATA: ' + str(data["lat"]) + ', ' + str(data["lng"]))
+    global latTemp
+    global lngTemp
+    global updated
+    latTemp = data["lat"]
+    lngTemp = data["lng"]
+    updated = True
+
+@socketio.on('land', namespace='/dir')
+def waypointSubmit(msg, methods=['GET', 'POST']):
+    global land
+    data = msg
+    print('LANDING DRONE')
+    land = data["land"]
 
 if __name__ == "__main__":
     socketio.run(app)  # creates instance of GUI class

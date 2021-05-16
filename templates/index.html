@@ -176,6 +176,13 @@
             console.log('Submitted.')
             socket.emit('waypoint', latLng, namespace = '/data')
         }
+
+        function land() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/dir');
+            console.log('Submitted.')
+            data = {"land": true}
+            socket.emit('land', data, namespace = '/data')
+        }
     </script>
 
     <style type="text/css" media="all">
@@ -203,6 +210,7 @@
     <input id="pac-input" class="controls" type="text" placeholder="Search Box" />
     <div id="map"></div>
     <button id="wpsubmit" onclick="submitLatLng();">Waypoint Submit</button>
+    <button id="landsubmit" onclick="land();">Land</button>
 
     <div class="container" id="content">
         <div class="row">
