@@ -10,73 +10,130 @@ import logging
 
 __author__ = 'affinity'
 
-class FlaskApp:
-    app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'secret!'
-    app.config['DEBUG'] = True
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+app.config['DEBUG'] = True
 
-    #turn the flask app into a socketio app
-    socketio = SocketIO(app, async_mode=None, logger=False, engineio_logger=False)
+#turn the flask app into a socketio app
+socketio = SocketIO(app, async_mode=None, logger=False, engineio_logger=False)
+thread = Thread()
+thread_stop_event = Event()
 
-    def __init__(self, masterParam):
-        self.master = masterParam
+#changing variables (declared to be changed)
+latTemp = 0
+lngTemp = 0
+updated = False
 
-        self.thread = Thread()
-        self.thread_stop_event = Event()
-    
+def randomNumberGenerator():
+    """
+    Generate a random number every 1 second and emit to a socketio instance (broadcast)
+    Ideally to be run in a separate thread?
+    """
+    #infinite loop of magical random numbers
+    print("Sending information")
+    master = commands.connect("COM3")
 
-    def randomNumberGenerator(self):
-        """
-        Generate a random number every 1 second and emit to a socketio instance (broadcast)
-        Ideally to be run in a separate thread?
-        """
-        #infinite loop of magical random numbers
-        print("Sending information")
+    while not thread_stop_event.isSet():
+        data = commands.display_data(master)
 
-        while not self.thread_stop_event.isSet():
-            
-            data = commands.display_data(self.master)
-            self.socketio.emit('alt', {'number': data["altitude"]}, namespace='/data')
-            self.socketio.emit('aspd', {'number': data["airspeed"]}, namespace='/data')
-            self.socketio.emit('gspd', {'number': data["groundspeed"]}, namespace='/data')
-            self.socketio.emit('hdg', {'number': data["heading"]}, namespace='/data')
-            self.socketio.emit('latlng', {'lat': data["latitude"], 'long': data["longitude"]}, namespace='/data')
-            self.socketio.emit('vlt', {'number': data["voltage"]}, namespace='/data')
-            self.socketio.emit('fltmd', {'number': data["flightMode"]}, namespace='/data')
-            self.socketio.sleep(0.1)
+        if ('.' in data["altitude"]):
+            i = 0
+            decimals = ''
+            altList = data["altitude"].split('.')
+            altDecimals = list(altList[1])
+            for x in altDecimals:
+                decimals += altDecimals[i]
+                i += 1
+                if i >= 3: break
+            altitude = altList[0] + '.' + decimals
+        else:
+            altitude = data["altitude"]
+        
+        if ('.' in data["groundspeed"]):
+            i = 0
+            decimals = ''
+            altList = data["groundspeed"].split('.')
+            altDecimals = list(altList[1])
+            for x in altDecimals:
+                decimals += altDecimals[i]
+                i += 1
+                if i >= 3: break
+            groundspeed = altList[0] + '.' + decimals
+        else:
+            groundspeed = data["groundspeed"]
+        
+        if ('.' in data["latitude"]):
+            i = 0
+            decimals = ''
+            altList = data["latitude"].split('.')
+            altDecimals = list(altList[1])
+            for x in altDecimals:
+                decimals += altDecimals[i]
+                i += 1
+                if i >= 3: break
+            latitude = altList[0] + '.' + decimals
+        else:
+            latitude = data["latitude"]
 
-    @app.route('/')
-    def index(self):
-        #only by sending this page first will the client be connected to the socketio instance
-        return render_template('index.html')
+        if ('.' in data["longitude"]):
+            i = 0
+            decimals = ''
+            altList = data["longitude"].split('.')
+            altDecimals = list(altList[1])
+            for x in altDecimals:
+                decimals += altDecimals[i]
+                i += 1
+                if i >= 3: break
+            longitude = altList[0] + '.' + decimals
+        else:
+            longitude = data["longitude"]
 
-    @socketio.on('connect', namespace='/data')
-    def test_connect(self):
-        # need visibility of the global thread object
-        print('Client connected')
+        socketio.emit('alt', {'number': altitude}, namespace='/data')
+        socketio.emit('aspd', {'number': data["airspeed"]}, namespace='/data')
+        socketio.emit('gspd', {'number': groundspeed}, namespace='/data')
+        socketio.emit('hdg', {'number': data["heading"]}, namespace='/data')
+        socketio.emit('latlng', {'lat': latitude, 'long': longitude}, namespace='/data')
+        socketio.emit('vlt', {'number': data["voltage"]}, namespace='/data')
+        socketio.emit('fltmd', {'number': data["flightMode"]}, namespace='/data')
+        socketio.sleep(0.1)
 
-        #Start the random number generator thread only if the thread has not been started before.
-        if not self.thread.is_alive():
-            print("Starting Thread")
-            thread = self.socketio.start_background_task(randomNumberGenerator)
+        if updated is True:
+            print('Updated.')
+            print(latTemp)
+            print(lngTemp)
+        else:
+            print('No new data.')
 
-    @socketio.on('disconnect', namespace='/data')
-    def test_disconnect(self):
+@app.route('/')
+def index():
+    #only by sending this page first will the client be connected to the socketio instance
+    return render_template('index.html')
+
+@socketio.on('connect', namespace='/data')
+def test_connect():
+    # need visibility of the global thread object
+    print('Client connected')
+    global thread
+    #Start the random number generator thread only if the thread has not been started before.
+    if not thread.is_alive():
+        print("Starting Thread")
+        thread = socketio.start_background_task(randomNumberGenerator)
+
+@socketio.on('disconnect', namespace='/data')
+def test_disconnect():
         print('Client disconnected')
 
-    @socketio.on('waypoint', namespace='/dir')
-    def waypointSubmit(self, jsontext, methods=['GET', 'POST']):
+@socketio.on('waypoint', namespace='/dir')
+def waypointSubmit(jsontext, methods=['GET', 'POST']):
         data = json.loads(jsontext)
         print('RECEIVED WAYPOINT DATA: ' + str(data["lat"]) + ', ' + str(data["lng"]))
-        commands.upload_mission(self.master, (data["lat"]), data["lng"], 5)
-
-    def run(self):
-        self.socketio.run(self.app)
+        global latTemp
+        global lngTemp
+        global updated
+        latTemp = data["lat"]
+        lngTemp = data["lng"]
+        updated = True
+        
 
 if __name__ == "__main__":
-    master = commands.connect("COM3")
-    app = FlaskApp(master)  # creates instance of GUI class
-    try:
-        app.run()  # starts the application
-    except KeyboardInterrupt:
-        app.quitting()  # safely quits the application when crtl+C is pressed
+    socketio.run(app)  # creates instance of GUI class
