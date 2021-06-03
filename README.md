@@ -17,7 +17,7 @@ pip install -r requirements.txt
 
 ```bash
 C:\__PATH_TO_VENV_FOLDER_\Scripts\activate.bat #activate the virtual environment
-C:\_PATH_TO_DRONE_REPOSITORY_\DisplayEssentialTelemetry.py #run the ground control GUI
+C:\_PATH_TO_DRONE_REPOSITORY_\server.py #run the ground control GUI (creates a local web server to host the website - see terminal for address)
 ```
 ## Features
 ### Current Features: 
