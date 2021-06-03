@@ -1,4 +1,4 @@
-# drones
+# Drones
 
 The drone software contained here has several functions. One function is to communicate with the drone to display important information as well as allow a user to arm and disarm with the click of a button in a GUI. In essence, this is a very basic ground control solution. The fully featured version of our software allows a potential first responder user to type in an adresss, click a spot on a map, and immediately deploy a drone to that location. In addition, telemetry and live video are streamed live; telemetry to the GUI and live video to a separate tab. 
 ## Requirements
@@ -36,7 +36,7 @@ Onboard Raspberry Pi running computer vision to identify objects from a height
 Home location automatically set upon arm using drone's location rather than hard coded. 
 
 Arming with Prearm checks and displaying corresponding acknowledgment messages
-##known issues 
+## Known Issues: 
 Sometimes mission acknowledgment messages are not received properly after MISSION_REQUEST_INT messages. For now, changing MISSION_REQUEST_INT to MISSION_REQUEST, running the program again, and then changing it back fixes the problem. 
 
 Sometimes, the waypoint shows that it is set below the home location. See Future Feature three for the soon-to-be-implemented fix for this. 
