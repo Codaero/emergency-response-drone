@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.min.js"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWXz6wT4APtW5qnjJTG8bX1IfXK6Hp-mg&callback=initAutocomplete&libraries=places&v=weekly"
+        async></script>
+    <script>
+        //socket data 
+        $(document).ready(function () {
+            //connect to the socket server.
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/data');
+            var numbers_received = [];
+
+            //receive details from server
+            socket.on('alt', function (msg) {
+                console.log("Received number" + msg.number);
+                //maintain a list of ten numbers
+
+                numbers_string = (msg.number);
+
+                $('#alt').html(numbers_string);
+            });
+
+            socket.on('aspd', function (msg) {
+                console.log("Received number" + msg.number);
+                //maintain a list of ten numbers
+
+                numbers_string = (msg.number);
+
+                $('#aspd').html(numbers_string);
+            });
+
+            socket.on('gspd', function (msg) {
+                console.log("Received number" + msg.number);
+                //maintain a list of ten numbers
+
+                numbers_string = (msg.number);
+
+                $('#gspd').html(numbers_string);
+            });
+
+            socket.on('hdg', function (msg) {
+                console.log("Received number" + msg.number);
+                //maintain a list of ten numbers
+
+                numbers_string = (msg.number);
+
+                $('#hdg').html(numbers_string);
+            });
+
+            socket.on('latlng', function (msg) {
+                console.log("Received number" + msg.number);
+                //maintain a list of ten numbers
+
+                numbers_string = (msg.lat) + ', ' + (msg.long);
+
+                $('#latlng').html(numbers_string);
+            });
+
+            socket.on('vlt', function (msg) {
+                console.log("Received number" + msg.number);
+                //maintain a list of ten numbers
+
+                numbers_string = (msg.number);
+
+                $('#vlt').html(numbers_string);
+            });
+
+            socket.on('fltmd', function (msg) {
+                console.log("Received number" + msg.number);
+                //maintain a list of ten numbers
+
+                numbers_string = (msg.number);
+
+                $('#fltmd').html(numbers_string);
+            });
+        });
+
+        //map configuration
+        var latLng;
+
+        function initAutocomplete() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: {
+                    lat: -33.8688,
+                    lng: 151.2195,
+                },
+                zoom: 13,
+                mapTypeId: "roadmap",
+            });
+            // Create the search box and link it to the UI element.
+            const input = document.getElementById("pac-input");
+            const searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener("bounds_changed", () => {
+                searchBox.setBounds(map.getBounds());
+            });
+            let markers = [];
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+
+            searchBox.addListener("places_changed", () => {
+                const places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+                // Clear out the old markers.
+                markers.forEach((marker) => {
+                    marker.setMap(null);
+                });
+                markers = [];
+                // For each place, get the icon, name and location.
+                const bounds = new google.maps.LatLngBounds();
+                places.forEach((place) => {
+                    if (!place.geometry || !place.geometry.location) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    const icon = {
+                        url: place.icon,
+                        size: new google.maps.Size(71, 71),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17, 34),
+                        scaledSize: new google.maps.Size(25, 25),
+                    };
+                    // Create a marker for each place.
+                    markers.push(
+                        new google.maps.Marker({
+                            map,
+                            icon,
+                            title: place.name,
+                            position: place.geometry.location,
+                        })
+                    );
+
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+            var marker = new google.maps.Marker({
+                position: {
+                    lat: -34.8799074,
+                    lng: 174.7565664,
+                },
+                map,
+                title: "Click to zoom",
+            });
+            marker.setMap(null);
+
+            map.addListener("click", (mapsMouseEvent) => {
+                marker.setMap(null);
+                marker = new google.maps.Marker({
+                    position: mapsMouseEvent.latLng,
+                    map: map,
+                });
+
+                latLng = JSON.stringify(mapsMouseEvent.latLng.toJSON());
+            });
+        }
+
+        function submitLatLng() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/dir');
+            console.log('Submitted.')
+            socket.emit('waypoint', latLng, namespace = '/data')
+        }
+
+        function land() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/dir');
+            console.log('Submitted.')
+            data = {"land": true}
+            socket.emit('land', data, namespace = '/data')
+        }
+        function arm() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/dir');
+            console.log('Submitted.')
+            data = {"arm": true}
+            socket.emit('arm', data, namespace = '/data')
+        }
+        function disarm() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/dir');
+            console.log('Submitted.')
+            data = {"disarm": true}
+            socket.emit('disarm', data, namespace = '/data')
+        }
+    </script>
+
+    <style type="text/css" media="all">
+        /* Always set the map height explicitly to define the size of the div
+* element that contains the map. */
+        #map {
+            height: 50%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+
+<body>
+    <h1>Drone Telemetry</h1>
+
+    <input id="pac-input" class="controls" type="text" placeholder="Search Box" />
+    <div id="map"></div>
+    <button id="wpsubmit" onclick="submitLatLng();">Waypoint Submit</button>
+    <button id="landsubmit" onclick="land();">Land</button>
+    <button id="arm" onclick="arm();">Arm</button>
+    <button id="disarm" onclick="disarm();">Disarm</button>
+
+    <div class="container" id="content">
+        <div class="row">
+            <p>Asynchronous page updates will appear here:</p>
+            <h3>Altitude:</h3>
+            <div id="alt"></div>
+            <h3>Airspeed:</h3>
+            <div id="aspd"></div>
+            <h3>Groundspeed:</h3>
+            <div id="gspd"></div>
+            <h3>Heading:</h3>
+            <div id="hdg"></div>
+            <h3>Latitude and Longitude:</h3>
+            <div id="latlng"></div>
+            <h3>Voltage:</h3>
+            <div id="vlt"></div>
+            <h3>Flight Mode:</h3>
+            <div id="fltmd"></div>
+        </div>
+    </div>
+
+
+
+
+</body>
+
+</html>
