@@ -1,6 +1,8 @@
+Made public for others to reference. This project lasted for 1 semester and was created for a software engineering class. [Link to presentation] https://docs.google.com/presentation/d/1u-WJxi2g2IAZQlqhe6AEw77TpO-6wP2oiyApudTTNTc/edit?usp=sharing
+
 # Drones
 
-The drone software contained here has several functions. One function is to communicate with the drone to display important information as well as allow a user to arm and disarm with the click of a button in a GUI. In essence, this is a very basic ground control solution. The fully featured version of our software allows a potential first responder user to type in an adresss, click a spot on a map, and immediately deploy a drone to that location. In addition, telemetry and live video are streamed live; telemetry to the GUI and live video to a separate tab. 
+The drone software contained here has several functions. One function is to communicate with the drone to display important information as well as allow a user to arm and disarm with the click of a button in a GUI. In essence, this is a very basic ground control solution. The fully featured version of our software allows a potential first responder user to type in an address, click a spot on a map, and immediately deploy a drone to that location. In addition, telemetry and live video are streamed live; telemetry to the GUI and live video to a separate tab. 
 ## Requirements
 Python 2.8 or later, which can be downloaded from their website. 
 
