@@ -1,4 +1,4 @@
-Made public for others to reference. This project lasted for 1 semester and was created for a software engineering class. [Link to presentation] https://docs.google.com/presentation/d/1u-WJxi2g2IAZQlqhe6AEw77TpO-6wP2oiyApudTTNTc/edit?usp=sharing
+Made public for others to reference. This project lasted for 1 semester and was created for a software engineering class. [Link to presentation](https://docs.google.com/presentation/d/1u-WJxi2g2IAZQlqhe6AEw77TpO-6wP2oiyApudTTNTc/edit?usp=sharing)
 
 # Drones
 
